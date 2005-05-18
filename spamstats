@@ -1,0 +1,156 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use FileHandle;
+
+my $start="";
+my %ids;
+my $clean=0;
+my %spam=('green'  => 0,
+          'blue'   => 0,
+          'yellow' => 0,
+          'orange' => 0,
+          'red'    => 0);
+my %dropped=('orange' => 0, 'red' => 0);
+my $executable=0;
+my $zip=0;
+my $virus=0;
+my %blocked;
+my %virii;
+my $total=0;
+
+my @files;
+if (@ARGV) {
+    @files=@ARGV;
+} else {
+    @files=reverse
+        grep { -f } ("/var/log/maillog", map { "/var/log/maillog.$_" } (1..4));
+}
+
+for my $file (@files) {
+    my $fh=new FileHandle "<$file" or warn "Can't open $file: $!\n";
+    next if (!$fh);
+
+    while (<$fh>) {
+        if (!$start) {
+            $start=substr $_, 0, 15;
+        }
+
+        my ($process, $id)=(split)[4,5];
+        if ($process=~/^postfix\/([-\w]+)\[\d+\]:$/) {
+            my $service=$1;
+            if ($service eq "smtp") {
+                if (/\(250 I got it\. Seems virus-free\.\)$/) {
+                    $clean++;
+                } elsif (/\(250 I WILL DROP THIS MESSAGE\.\)$/) {
+                    $virus++;
+                } elsif (/\(250 2\.7\.1 Ok, discarded, (UBE|.*VIRUS: .*\))/) {
+                    my $reason=$1;
+                    if ($reason eq 'UBE') {
+                        $blocked{$reason}++;
+                    } elsif ($reason=~/VIRUS:\s+(.*)\)$/) {
+                        $virii{$1}++;
+                        $virus++;
+                    }
+                }
+            } elsif ($service eq "smtpd") {
+                if (/ blocked using ([-\w\.]+)[,;]/) {
+                    $blocked{$1}++;
+                } elsif (/: client=([-\w\.]+\[[\d\.]+\])$/) {
+                    $ids{$id}++ if ($1 ne "localhost[127.0.0.1]");
+                }
+            } elsif ($service eq "cleanup") {
+                if (/ ([a-z]+) spam dropped$/) {
+                    $dropped{$1}++;
+                } elsif (/No executable attachments allowed here\.$/) {
+                    $executable++;
+                } elsif (/Zip attachments not allowed here\.$/) {
+                    $zip++;
+                } elsif (/reject: header (?i)(X-Spam-Flag): YES/) {
+                    $blocked{$1}++;
+                } elsif (/Rejected - see/) {
+                    $blocked{'Local rules'}++;
+                } elsif (/We didn't send you a virus so don't send us your spam\.$/) {
+                    $blocked{'virus filter spam'}++;
+                }
+            }
+        } elsif ($process=~/^assassind\[/) {
+            if (/Message has spam score of \d+\.\d+ \(([a-z]+)\)\s*$/) {
+                $spam{$1}++;
+            }
+        }
+    }
+}
+
+my $messages=scalar(keys(%ids));
+
+print "Stats beginning $start\n", "-" x 31, "\n";
+
+if (grep { $spam{$_} > 0 } keys(%spam)) {
+    print <<END;
+
+Spam scores
+-----------
+END
+
+    for my $color (qw(green blue yellow orange red)) {
+        printf "%7s: %9d (%2.f%%)\n",
+            $color, $spam{$color}, ($spam{$color}/$messages)*100;
+    }
+}
+
+print <<END;
+
+Spam dropped
+------------
+END
+
+#printf "\nDropped %d orange spam and %d red spam (%d total)\n",
+#       $dropped{'orange'}, $dropped{'red'}, $dropped{'orange'}+$dropped{'red'};
+for my $site (sort { $blocked{$b} <=> $blocked{$a} } keys %blocked) {
+    printf "%-20s  %6d (%2.f%%)\n",
+        $site, $blocked{$site}, ($blocked{$site}/$messages)*100;
+    $total+=$blocked{$site};
+}
+
+for my $color (qw(orange red)) {
+    if ($dropped{$color}) {
+        printf "%-20s  %6d (%2.f%%)\n",
+            $color." score", $dropped{$color}, ($dropped{$color}/$messages)*100;
+        $total+=$dropped{$color};
+    }
+}
+
+printf "%-20s  %6d (%2.f%%)\n",
+    "executable content", $executable, ($executable/$messages)*100;
+$total+=$executable;
+
+if ($zip) {
+printf "%-20s  %6d (%2.f%%)\n",
+    "zip attachments", $zip, ($zip/$messages)*100;
+$total+=$zip;
+}
+
+printf "%-20s  %6d (%2.f%%)\n",
+    "virus infected", $virus, ($virus/$messages)*100;
+$total+=$virus;
+
+print "-" x 28, "\n";
+printf "%-20s  %6d (%2.f%%)\n", "Total", $total, ($total/$messages)*100;
+printf "%-20s  %6d\n", "Total messages", $messages;
+printf "\n%2.f%% of all mail blocked.\n", ($total/$messages)*100;
+
+if (keys(%virii)) {
+    print <<END;
+
+VIRUS SUMMARY
+-------------
+END
+
+    for my $name (sort { $virii{$b} <=> $virii{$a} } keys(%virii)) {
+        printf "%-30s  %6d\n", $name, $virii{$name};
+    }
+}
+# vi: set ai et:
