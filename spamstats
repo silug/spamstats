@@ -23,7 +23,7 @@
 # 59 Temple Place, Suite 330
 # Boston, MA  02111-1307  USA
 #
-# $Id: spamstats,v 1.4 2005/09/30 18:20:39 steve Exp $
+# $Id: spamstats,v 1.5 2006/07/15 23:26:44 steve Exp $
 
 use strict;
 use warnings;
@@ -71,13 +71,13 @@ for my $file (@files) {
                     $clean++;
                 } elsif (/\(250 I WILL DROP THIS MESSAGE\.\)$/) {
                     $virus++;
-                } elsif (/\(250 2\.7\.1 Ok, discarded, (UBE|.*VIRUS: .*\))/) {
+                } elsif (/\(250 2\.7\.1 Ok, discarded, (?:id=[-\d]* - )?(SPAM|UBE|.*VIRUS: .*\))/) {
                     my $reason=$1;
-                    if ($reason eq 'UBE') {
-                        $blocked{$reason}++;
-                    } elsif ($reason=~/VIRUS:\s+(.*)\)$/) {
+                    if ($reason=~/VIRUS:\s+(.*)\)$/) {
                         $virii{$1}++;
                         $virus++;
+                    } else {
+                        $blocked{$reason}++;
                     }
                 }
             } elsif ($service eq "smtpd") {
