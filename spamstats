@@ -2,7 +2,7 @@
 #
 # spamstats - Examine mail logs for spam/virus filter stats.
 #
-# Copyright (C) 2003-2005 Steven Pritchard <steve@kspei.com>
+# Copyright (C) 2003-2006 Steven Pritchard <steve@kspei.com>
 # This program is free software; you may redistrute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version
@@ -23,7 +23,7 @@
 # 59 Temple Place, Suite 330
 # Boston, MA  02111-1307  USA
 #
-# $Id: spamstats,v 1.5 2006/07/15 23:26:44 steve Exp $
+# $Id: spamstats,v 1.6 2006/07/18 16:47:09 steve Exp $
 
 use strict;
 use warnings;
