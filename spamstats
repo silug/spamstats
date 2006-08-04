@@ -23,7 +23,7 @@
 # 59 Temple Place, Suite 330
 # Boston, MA  02111-1307  USA
 #
-# $Id: spamstats,v 1.7 2006/07/31 23:59:31 steve Exp $
+# $Id: spamstats,v 1.8 2006/08/04 20:28:46 steve Exp $
 
 use strict;
 use warnings;
@@ -95,7 +95,7 @@ for my $file (@files) {
                     $zip++;
                 } elsif (/reject: header (?i)(X-Spam-Flag): YES/) {
                     $blocked{$1}++;
-                } elsif (/Rejected - (see|UCE)/) {
+                } elsif (/Rejected - (?:see|U[BC]E)/) {
                     $blocked{'Local rules'}++;
                 } elsif (/We didn't send you a virus so don't send us your spam\.$/) {
                     $blocked{'virus filter spam'}++;
