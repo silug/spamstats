@@ -23,7 +23,7 @@
 # 59 Temple Place, Suite 330
 # Boston, MA  02111-1307  USA
 #
-# $Id: spamstats,v 1.8 2006/08/04 20:28:46 steve Exp $
+# $Id: spamstats,v 1.9 2006/08/09 16:23:34 steve Exp $
 
 use strict;
 use warnings;
@@ -84,7 +84,7 @@ for my $file (@files) {
                 if (/ blocked using ([-\w\.]+)[,;]/) {
                     $blocked{$1}++;
                 } elsif (/: client=([-\w\.]+\[[\d\.]+\])$/) {
-                    $ids{$id}++ if ($1 ne "localhost[127.0.0.1]");
+                    $ids{$id}++ if ($1 !~ /^[\w.\-]*\[127\.0\.0\.1\]$/);
                 }
             } elsif ($service eq "cleanup") {
                 if (/ ([a-z]+) spam dropped$/) {
