@@ -23,12 +23,13 @@
 # 59 Temple Place, Suite 330
 # Boston, MA  02111-1307  USA
 #
-# $Id: spamstats,v 1.9 2006/08/09 16:23:34 steve Exp $
+# $Id: spamstats,v 1.10 2006/08/09 17:43:30 steve Exp $
 
 use strict;
 use warnings;
 
 use FileHandle;
+use List::Util qw(sum);
 
 my $start="";
 my %ids;
@@ -42,6 +43,7 @@ my %dropped=('orange' => 0, 'red' => 0);
 my $executable=0;
 my $zip=0;
 my $virus=0;
+my %dnsbl;
 my %blocked;
 my %virii;
 my $total=0;
@@ -82,9 +84,9 @@ for my $file (@files) {
                 }
             } elsif ($service eq "smtpd") {
                 if (/ blocked using ([-\w\.]+)[,;]/) {
-                    $blocked{$1}++;
-                } elsif (/: client=([-\w\.]+\[[\d\.]+\])$/) {
-                    $ids{$id}++ if ($1 !~ /^[\w.\-]*\[127\.0\.0\.1\]$/);
+                    $dnsbl{$1}++;
+                } elsif (/: client=[-\w\.]+(\[[\d\.]+\])$/) {
+                    $ids{$id}++ if ($1 ne "[127.0.0.1]");
                 }
             } elsif ($service eq "cleanup") {
                 if (/ ([a-z]+) spam dropped$/) {
@@ -110,6 +112,7 @@ for my $file (@files) {
 }
 
 my $messages=scalar(keys(%ids));
+$messages+=sum(values %dnsbl);
 
 if ($messages == 0) {
     print STDERR "No messages.\n";
@@ -139,10 +142,16 @@ END
 
 #printf "\nDropped %d orange spam and %d red spam (%d total)\n",
 #       $dropped{'orange'}, $dropped{'red'}, $dropped{'orange'}+$dropped{'red'};
-for my $site (sort { $blocked{$b} <=> $blocked{$a} } keys %blocked) {
+for my $site (sort { $dnsbl{$b} <=> $dnsbl{$a} } keys %dnsbl) {
     printf "%-20s  %6d (%2.f%%)\n",
-        $site, $blocked{$site}, ($blocked{$site}/$messages)*100;
-    $total+=$blocked{$site};
+        $site, $dnsbl{$site}, ($dnsbl{$site}/$messages)*100;
+    $total+=$dnsbl{$site};
+}
+
+for my $reason (sort { $blocked{$b} <=> $blocked{$a} } keys %blocked) {
+    printf "%-20s  %6d (%2.f%%)\n",
+        $reason, $blocked{$reason}, ($blocked{$reason}/$messages)*100;
+    $total+=$blocked{$reason};
 }
 
 for my $color (qw(orange red)) {
