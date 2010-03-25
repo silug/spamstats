@@ -11,5 +11,5 @@ Jul  2 04:02:09 mailhost postfix/smtpd[11763]: disconnect from unknown[127.0.0.1
 Jul  2 04:02:09 mailhost amavis[12086]: (12086-03) Passed CLEAN, [1.2.3.4] <bounce-ouhyufalknv@smtp.example.com> -> <user01@example.org>, Message-ID: <abc.xxx.yyy@example.com>, mail_id: un0e2OgaPqgM, Hits: 0.258, 2637 ms
 Jul  2 04:02:09 mailhost postfix/smtp[11814]: E0E2D5423B: to=<user01@example.org>, relay=127.0.0.1[127.0.0.1], delay=4, status=sent (250 2.6.0 Ok, id=12086-03, from MTA([127.0.0.1]:10025): 250 Ok: queued as 0438A5432B)
 Jul  2 04:02:09 mailhost postfix/qmgr[1960]: E0E2D5423B: removed
-Jul  2 04:02:09 mailhost postfix/smtp[11817]: 0438A5432B: to=<user01@example.org>, relay=emailnew.usi.edu[10.12.10.7], delay=0, status=sent (250 2.6.0  <abc.xxx.yyy@example.com> Queued mail for delivery)
+Jul  2 04:02:09 mailhost postfix/smtp[11817]: 0438A5432B: to=<user01@example.org>, relay=mail.example.org[10.63.132.87], delay=0, status=sent (250 2.6.0  <abc.xxx.yyy@example.com> Queued mail for delivery)
 Jul  2 04:02:09 mailhost postfix/qmgr[1960]: 0438A5432B: removed
