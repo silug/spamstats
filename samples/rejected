@@ -1,0 +1,4 @@
+Jul  2 04:06:44 mailhost postfix/smtpd[11174]: connect from dialup9824651209.example.net[10.81.74.91]
+Jul  2 04:06:46 mailhost postfix/smtpd[11174]: NOQUEUE: reject: RCPT from dialup9824651209.example.net[10.81.74.91]: 554 Service unavailable; Client host [10.81.74.91] blocked using sbl-xbl.spamhaus.org; http://www.spamhaus.org/query/bl?ip=10.81.74.91; from=<BogusUser@example.net> to=<user12@example.org> proto=SMTP helo=<example.net>
+Jul  2 04:06:46 mailhost postfix/smtpd[11174]: lost connection after RCPT from dialup9824651209.example.net[10.81.74.91]
+Jul  2 04:06:46 mailhost postfix/smtpd[11174]: disconnect from dialup9824651209.example.net[10.81.74.91]

@@ -1,0 +1,8 @@
+Jul  2 04:06:46 mailhost postfix/smtpd[11175]: connect from zombie01.example.net.kr[10.82.94.19]
+Jul  2 04:06:47 mailhost postfix/smtpd[11175]: 7F0DB540A2: client=zombie01.example.net.kr[10.82.94.19]
+Jul  2 04:06:47 mailhost postfix/cleanup[11730]: 7F0DB540A2: message-id=<443F9D58.8493785@panhandle.rr.com>
+Jul  2 04:06:48 mailhost postfix/qmgr[1960]: 7F0DB540A2: from=<Andrew@example.com>, size=6135, nrcpt=1 (queue active)
+Jul  2 04:06:48 mailhost clamd.amavisd[1865]: /var/spool/amavisd/tmp/amavis-20060702T040648-12421/parts/p002: HTML.Phishing.Bank-550 FOUND 
+Jul  2 04:06:48 mailhost amavis[12421]: (12421-01) Blocked INFECTED (HTML.Phishing.Bank-550), [10.82.94.19] <Andrew@example.com> -> <user92@example.org>, Message-ID: <443F9D58.8493785@panhandle.rr.com>, mail_id: YuBAl3L+ee0Z, Hits: -, 178 ms
+Jul  2 04:06:48 mailhost postfix/smtp[11809]: 7F0DB540A2: to=<user92@example.org>, relay=127.0.0.1[127.0.0.1], delay=1, status=sent (250 2.7.1 Ok, discarded, id=12421-01 - VIRUS: HTML.Phishing.Bank-550)
+Jul  2 04:06:48 mailhost postfix/qmgr[1960]: 7F0DB540A2: removed

@@ -1,0 +1,8 @@
+Jul  2 11:45:14 mailhost postfix/smtpd[20304]: connect from adsl-10-97-215-195.example.net[10.97.215.195]
+Jul  2 11:45:14 mailhost postfix/smtpd[20304]: BEBE054108: client=adsl-10-97-215-195.example.net[10.97.215.195]
+Jul  2 11:45:15 mailhost postfix/cleanup[21524]: BEBE054108: message-id=<20060702164514.BEBE054108@mailhost.example.org>
+Jul  2 11:45:15 mailhost postfix/qmgr[1960]: BEBE054108: from=<ssmith@random.dept.example.com>, size=1308, nrcpt=1 (queue active)
+Jul  2 11:45:15 mailhost postfix/smtpd[20304]: disconnect from adsl-10-97-215-195.example.net[10.97.215.195]
+Jul  2 11:45:15 mailhost amavis[21389]: (21389-08) Blocked SPAM, [10.97.215.195] <ssmith@random.dept.example.com> -> <ssmith@example.org>, Message-ID: <20060702164514.BEBE054108@mailhost.example.org>, mail_id: VRl0sc2-hs2r, Hits: 20.417, 636 ms
+Jul  2 11:45:15 mailhost postfix/smtp[21019]: BEBE054108: to=<ssmith@example.org>, relay=127.0.0.1[127.0.0.1], delay=1, status=sent (250 2.7.1 Ok, discarded, id=21389-08 - SPAM)
+Jul  2 11:45:15 mailhost postfix/qmgr[1960]: BEBE054108: removed
